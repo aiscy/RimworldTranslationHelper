@@ -1,5 +1,5 @@
 from PyQt5.QtCore import QAbstractItemModel, QModelIndex, Qt
-from lxml.etree import parse
+from lxml.etree import parse, XMLParser
 
 
 class DomItem:
@@ -37,7 +37,7 @@ class DomModel(QAbstractItemModel):
         super().__init__(parent)
 
         self._file_path = file_path
-        self._xml_tree = parse(self._file_path)
+        self._xml_tree = parse(self._file_path, parser=XMLParser(remove_blank_text=True))
         self.root = DomItem(self._xml_tree.getroot(), 0)
 
     @property
@@ -65,10 +65,7 @@ class DomModel(QAbstractItemModel):
 
             if index.column() == 1:
                 value = node.text
-                if value.isspace():
-                    return None
-                else:
-                    return value
+                return value
 
         if role == Qt.EditRole:
             if index.column() == 1:
