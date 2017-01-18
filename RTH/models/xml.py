@@ -37,12 +37,16 @@ class DomModel(QAbstractItemModel):
         super().__init__(parent)
 
         self._file_path = file_path
-        self.xml_tree = parse(self._file_path)
-        self.root = DomItem(self.xml_tree.getroot(), 0)
+        self._xml_tree = parse(self._file_path)
+        self.root = DomItem(self._xml_tree.getroot(), 0)
 
     @property
     def file_path(self):
         return self._file_path
+
+    @property
+    def xml_tree(self):
+        return self._xml_tree
 
     def columnCount(self, parent=None, *args, **kwargs):
         return 2
