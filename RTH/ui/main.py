@@ -48,6 +48,7 @@ class Ui_MainWindow(object):
         self.tab_widget.setTabShape(QtWidgets.QTabWidget.Rounded)
         self.tab_widget.setDocumentMode(True)
         self.tab_widget.setTabsClosable(True)
+        self.tab_widget.setMovable(True)
         self.tab_widget.setTabBarAutoHide(False)
         self.tab_widget.setObjectName("tab_widget")
         self.gridLayout.addWidget(self.splitter, 1, 0, 1, 1)
