@@ -123,12 +123,27 @@
      <string>Файл</string>
     </property>
     <addaction name="open_folder"/>
+    <addaction name="save"/>
    </widget>
    <addaction name="menuOpen_mod"/>
   </widget>
   <action name="open_folder">
    <property name="text">
     <string>Открыть директорию...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="save">
+   <property name="text">
+    <string>Сохранить</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::WindowShortcut</enum>
    </property>
   </action>
  </widget>

@@ -61,7 +61,11 @@ class Ui_MainWindow(object):
         MainWindow.setMenuBar(self.menubar)
         self.open_folder = QtWidgets.QAction(MainWindow)
         self.open_folder.setObjectName("open_folder")
+        self.save = QtWidgets.QAction(MainWindow)
+        self.save.setShortcutContext(QtCore.Qt.WindowShortcut)
+        self.save.setObjectName("save")
         self.menuOpen_mod.addAction(self.open_folder)
+        self.menuOpen_mod.addAction(self.save)
         self.menubar.addAction(self.menuOpen_mod.menuAction())
 
         self.retranslateUi(MainWindow)
@@ -72,4 +76,7 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.menuOpen_mod.setTitle(_translate("MainWindow", "Файл"))
         self.open_folder.setText(_translate("MainWindow", "Открыть директорию..."))
+        self.open_folder.setShortcut(_translate("MainWindow", "Ctrl+O"))
+        self.save.setText(_translate("MainWindow", "Сохранить"))
+        self.save.setShortcut(_translate("MainWindow", "Ctrl+S"))
 
