@@ -21,6 +21,7 @@ class MainUI(QMainWindow, Ui_MainWindow):
         self.show()
 
     def connect_signals(self):
+        self.save.triggered.connect(self.save_xml)
         self.tab_widget.tabCloseRequested.connect(self.close_xml)
         self.open_folder.triggered.connect(self.open_project)
         self.project_view.doubleClicked.connect(lambda m: self.open_xml(self.project_view.model().filePath(m)))
@@ -70,3 +71,10 @@ class MainUI(QMainWindow, Ui_MainWindow):
         self.opened_files.pop(file_path)
         self.tab_widget.removeTab(index)
         widget.deleteLater()  # TODO Make some tests
+
+    def save_xml(self):
+        widget = self.tab_widget.currentWidget()
+        model = widget.model()
+        file_path = model.file_path
+        tree = model.xml_tree
+        tree.write(file_path, encoding=tree.docinfo.encoding, pretty_print=True, xml_declaration=True)
