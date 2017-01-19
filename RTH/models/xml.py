@@ -38,7 +38,9 @@ class DomModel(QAbstractItemModel):
 
         self._file_path = file_path
         self._xml_tree = parse(self._file_path, parser=XMLParser(remove_blank_text=True))
-        self.root = DomItem(self._xml_tree.getroot(), 0)
+        self._root = DomItem(self._xml_tree.getroot(), 0)
+        self._is_modified = False
+        self.dataChanged.connect(self.file_was_modified)
 
     @property
     def file_path(self):
@@ -47,6 +49,18 @@ class DomModel(QAbstractItemModel):
     @property
     def xml_tree(self):
         return self._xml_tree
+    
+    @property
+    def is_modified(self):
+        return self._is_modified
+
+    @is_modified.setter
+    def is_modified(self, value):
+        if isinstance(value, bool):
+            self._is_modified = value
+
+    def file_was_modified(self, *args):
+        self._is_modified = True
 
     def columnCount(self, parent=None, *args, **kwargs):
         return 2
@@ -106,7 +120,7 @@ class DomModel(QAbstractItemModel):
             return QModelIndex()
 
         if not parent.isValid():
-            parent_item = self.root
+            parent_item = self._root
         else:
             parent_item = parent.internalPointer()
 
@@ -123,7 +137,7 @@ class DomModel(QAbstractItemModel):
         child_item = index.internalPointer()
         parent_item = child_item.parent()
 
-        if not parent_item or parent_item == self.root:
+        if not parent_item or parent_item == self._root:
             return QModelIndex()
 
         return self.createIndex(parent_item.row(), 0, parent_item)
@@ -133,7 +147,7 @@ class DomModel(QAbstractItemModel):
             return 0
 
         if not parent.isValid():
-            parent_item = self.root
+            parent_item = self._root
         else:
             parent_item = parent.internalPointer()
 

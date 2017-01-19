@@ -75,6 +75,9 @@ class MainUI(QMainWindow, Ui_MainWindow):
     def save_xml(self):
         widget = self.tab_widget.currentWidget()
         model = widget.model()
+        if not model.is_modified:
+            return
         file_path = model.file_path
         tree = model.xml_tree
         tree.write(file_path, encoding=tree.docinfo.encoding, pretty_print=True, xml_declaration=True)
+        model.is_modified = False
