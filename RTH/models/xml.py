@@ -103,7 +103,10 @@ class DomModel(QAbstractItemModel):
         if index.column() == 0:
             return Qt.NoItemFlags
         if index.column() == 1:
-            return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
+            if index.internalPointer().node().text is None:
+                return Qt.NoItemFlags
+            else:
+                return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
 
     def headerData(self, section, orientation, role=Qt.DisplayRole):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:
