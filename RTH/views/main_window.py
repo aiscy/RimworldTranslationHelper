@@ -58,6 +58,7 @@ class MainUI(QMainWindow, Ui_MainWindow):
         view = QTreeView()
         view.setModel(model)
         view.expandAll()
+        view.setRootIsDecorated(False)
         view.setItemsExpandable(False)
         delegate = XMLDelegate()
         view.setItemDelegate(delegate)
