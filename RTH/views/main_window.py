@@ -2,8 +2,7 @@ import os
 from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import QMainWindow, QFileSystemModel, QFileDialog, QMessageBox, QTreeView
 
-from RTH.models.xml import DomModel
-from RTH.delegate.xml import XMLDelegate
+from RTH.handlers import xml_handler
 from RTH.ui.main import Ui_MainWindow
 
 
@@ -50,21 +49,21 @@ class MainUI(QMainWindow, Ui_MainWindow):
         if file_path in self.opened_files:
             self.tab_widget.setCurrentWidget(self.opened_files[file_path]['view'])
             return
+        ext = os.path.splitext(file_path)[1]
+        if ext == '.xml':  # TODO Rewrite
+            handler = xml_handler
+        else:
+            QMessageBox.critical(self, 'RimworldTranslationHelper',
+                                 'Файл не поддерживается', buttons=QMessageBox.Ok)
+            return
         try:
-            model = DomModel(file_path)
+            view = handler(file_path)
         except Exception as error_msg:
             QMessageBox.critical(self, 'RimworldTranslationHelper', 'При открытии файла произошла ошибка:\n{}'.format(error_msg), buttons=QMessageBox.Ok)
             return
-        view = QTreeView()
-        view.setModel(model)
-        view.expandAll()
-        view.setRootIsDecorated(False)
-        view.setItemsExpandable(False)
-        delegate = XMLDelegate()
-        view.setItemDelegate(delegate)
         index = self.tab_widget.addTab(view, os.path.basename(file_path))
         self.tab_widget.setCurrentIndex(index)
-        self.opened_files[file_path] = {'view': view, 'model': model, 'delegate': delegate}
+        self.opened_files[file_path] = {'view': view}
 
     def close_xml(self, index):
         widget = self.tab_widget.widget(index)
