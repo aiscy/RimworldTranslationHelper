@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QStyledItemDelegate, QLineEdit
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QSize
 
 
 class XMLDelegate(QStyledItemDelegate):
@@ -16,3 +16,6 @@ class XMLDelegate(QStyledItemDelegate):
 
     def updateEditorGeometry(self, widget, option, index):
         widget.setGeometry(option.rect)
+
+    def sizeHint(self, option, index):
+        return QSize(20, 20)

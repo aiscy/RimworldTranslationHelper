@@ -129,3 +129,6 @@ Makefile*
 CMakeLists.txt.user*
 /main.build/
 /main.dist/
+/Interactions_Guest.xml
+.idea/
+Interactions_Guest.xml
