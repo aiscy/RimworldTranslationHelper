@@ -2,7 +2,7 @@ import os
 from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import QMainWindow, QFileSystemModel, QFileDialog, QMessageBox
 
-from RTH.handlers import xml_handler
+from RTH.handlers import handler
 from RTH.ui.main import Ui_MainWindow
 
 
@@ -49,13 +49,6 @@ class MainUI(QMainWindow, Ui_MainWindow):
             return
         if file_path in self.opened_files:
             self.tab_widget.setCurrentWidget(self.opened_files[file_path]['view'])
-            return
-        ext = os.path.splitext(file_path)[1]
-        if ext == '.xml':  # TODO Rewrite
-            handler = xml_handler
-        else:
-            QMessageBox.critical(self, 'RimworldTranslationHelper',
-                                 'Файл не поддерживается', buttons=QMessageBox.Ok)
             return
         try:
             view = handler(file_path)

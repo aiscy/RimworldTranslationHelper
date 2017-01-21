@@ -1,28 +1,19 @@
-from PyQt5.QtWidgets import QTreeView
+from PyQt5.QtCore import QUrl, QFile, QTextStream
+from PyQt5.QtWidgets import QTreeView, QTextEdit
 
 from RTH.delegate.xml import XMLDelegate
 from RTH.models.xml import DomModel
 
-
-#
-# class BaseHandler:
-#     def __init__(self, file_path: str):
-#         self.file_path = file_path
-#         self.view = None
-#         self.model = None
-#         self.delegate = None
-#
-#     def open(self):
-#         raise NotImplementedError
-#
-#     def close(self):
-#         raise NotImplementedError
-#
-#     def __call__(self, *args, **kwargs):
-#         self.open()
+from RTH.utils import ext_dispatcher
 
 
-def xml_handler(file_path: str) -> QTreeView:
+@ext_dispatcher
+def handler(_):
+    raise NotImplementedError
+
+
+@handler.register('.xml')
+def _(file_path: str) -> QTreeView:
     model = DomModel(file_path)
     view = QTreeView()
     view.setModel(model)
@@ -34,3 +25,10 @@ def xml_handler(file_path: str) -> QTreeView:
     return view
 
 
+@handler.register('.txt')
+def _(file_path: str) -> QTextEdit:
+    file = QFile(file_path)
+    stream = QTextStream(file)
+    view = QTextEdit
+    view.setPlainText(stream.readAll())
+    return view
