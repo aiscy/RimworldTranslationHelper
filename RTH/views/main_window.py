@@ -10,7 +10,7 @@ class MainUI(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.settings = QSettings('SlowSoft', 'RimworldTranslationHelper')
+        self.settings = QSettings()
 
         self.connect_signals()
         self.load_settings()
