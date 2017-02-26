@@ -1,8 +1,10 @@
 import os
+import weakref
+import gc
 from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import QMainWindow, QFileSystemModel, QFileDialog, QMessageBox
 
-from RTH.handlers import handler
+from RTH.handlers import tab_widget_factory, AbstractTabWidget
 from RTH.ui.main import Ui_MainWindow
 
 
@@ -14,9 +16,7 @@ class MainUI(QMainWindow, Ui_MainWindow):
 
         self.connect_signals()
         self.load_settings()
-        self.load_models()
-        self.opened_files = {}
-
+        self.tab_widgets = weakref.WeakValueDictionary()
         self.show()
 
     def connect_signals(self):
@@ -26,9 +26,6 @@ class MainUI(QMainWindow, Ui_MainWindow):
         self.project_view.doubleClicked.connect(lambda m: self.open_file(self.project_view.model().filePath(m)))
 
     def load_settings(self):
-        pass
-
-    def load_models(self):
         pass
 
     def open_project(self):
@@ -47,28 +44,27 @@ class MainUI(QMainWindow, Ui_MainWindow):
     def open_file(self, file_path):
         if os.path.isdir(file_path):  # TODO
             return
-        if file_path in self.opened_files:
-            self.tab_widget.setCurrentWidget(self.opened_files[file_path]['view'])
+        if file_path in self.tab_widgets:
+            self.tab_widget.setCurrentWidget(self.tab_widgets[file_path])
             return
         try:
-            view = handler(file_path)
+            widget = tab_widget_factory(file_path, parent=self)
         except Exception as error_msg:
             QMessageBox.critical(self, 'RimworldTranslationHelper',
                                  'При открытии файла произошла ошибка:\n{}'.format(error_msg), buttons=QMessageBox.Ok)
             return
-        index = self.tab_widget.addTab(view, os.path.basename(file_path))
-        self.tab_widget.setCurrentIndex(index)
-        self.opened_files[file_path] = {'view': view}
+        self.tab_widget.addTab(widget, widget.file_name)
+        self.tab_widget.setCurrentWidget(widget)
+        self.tab_widgets[file_path] = widget
 
     def close_file(self, index):
-        widget = self.tab_widget.widget(index)
-        file_path = widget.model().file_path
-        self.opened_files.pop(file_path)
+        widget = self.tab_widget.widget(index)  # type: AbstractTabWidget
+        widget.deleteLater()
+        widget.close()
         self.tab_widget.removeTab(index)
-        widget.deleteLater()  # TODO Make some tests
 
     def save_file(self):
-        if not self.opened_files:
+        if not self.tab_widget.count():
             return
         widget = self.tab_widget.currentWidget()
         model = widget.model()
